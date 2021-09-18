@@ -1,0 +1,142 @@
+- show All databases
+show dbs
+
+
+- show Current databases
+db
+
+
+- Create or Switch database
+use <name_database>
+
+
+- Drop
+db.dropDatabase()
+
+
+- Create collection
+db.createCollection('<name_collection>')
+
+
+- Insert Row
+db.<name_collection>.insert({
+  title: 'Post One',
+  body: 'Body of post one',
+  category: 'News',
+  tags: ['news', 'events'],
+  user: {
+    name: 'John Doe',
+    status: 'author'
+  },
+  date: Date()
+})
+
+
+- Insert Multiple Row
+db.<name_collection>.insertMany([
+  {
+    title: 'Post Two',
+    body: 'Body of post two',
+    category: 'Technology',
+    date: Date()
+  },
+  {
+    title: 'Post Three',
+    body: 'Body of post three',
+    category: 'News',
+    date: Date()
+  },
+  {
+    title: 'Post Four',
+    body: 'Body of post three',
+    category: 'Entertainment',
+    date: Date()
+  }
+])
+
+- get all Rows
+db.<name_collection>.find()
+
+
+- get all Rows formatted
+db.<name_collection>.find().pretty
+
+
+- Find Rows
+db.<name_collection>.find({ category: 'News' })
+
+
+- sort Rows
+# asc
+db.<name_collection>.find().sort({ title: 1 }).pretty()
+
+# desc
+db.<name_collection>.find().sort({ title: -1 }).pretty()
+
+
+- count Rows
+db.<name_collection>.find().count()
+
+# adding filter 
+db.<name_collection>.find({ category: 'news' }).count()
+
+
+- limit Rows
+db.<name_collection>.find().limit(2).pretty()
+
+
+- chaining
+db.<name_collection>.find().limit(2).sort({ title: 1 }).pretty()
+
+
+- Find One Row
+db.<name_collection>.findOne({ category: 'News' })
+# returns only one 
+
+
+- Find specific fields
+db.<name_collection>.find({ title: 'Post One' }, {
+  title: 1,
+  author: 1
+})
+# "WHERE CLAUSE" with adding more conditions
+
+
+- Update Row
+db.<name_collection>.update({ title: 'Post Two' },
+{
+  title: 'Post Two',
+  body: 'New body for post 2',
+  date: Date()
+},
+{
+  upsert: true
+})
+
+
+- Update specific field
+db.posts.update({ title: 'Post Two' },
+{
+  $set: {
+    body: 'Body for post 2',
+    category: 'Technology'
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
