@@ -123,8 +123,14 @@ db.posts.update({ title: 'Post Two' },
   }
 })
 
+------------------------------------------
+db.sampleset.insertMany([])
 
+db.sampleset.find().count()
 
+db.<name_collection>.find({ location: 'de' }).count()
+
+db.<name_collection>.find().limit(3).pretty()
 
 
 

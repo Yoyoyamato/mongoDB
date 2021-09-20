@@ -1,0 +1,129 @@
+<BASICS>
+-- use the listingsAndReviews collection 
+coll = db.listingsAndReviews;
+
+-- find all the data where minimum_nights is 2.
+coll.find({"minimum_nights": { $eq: "2"}}).pretty()
+== equivalent to 
+coll.find({"minimum_nights": "2"}).pretty()
+
+----------------------------------------------------
+-- similar syntax for $gt, $gte, $lt, $lte, $ne
+- $gt : greater than
+- $gte : greater than or equal to
+- $lt : less than
+- $lte : less than or equal to
+- $ne : not equal to
+----------------------------------------------------
+
+-- find all the data where minimum_nights is 2 or 5.
+coll.find({"minimum_nights": { $in: ["2", "5"]}}).pretty()
+---- use $in operator when checking the value of the same field 
+---- instead of the $or
+
+----------------------------------------------------
+-- similar syntax for $nin
+- $nin : not in 
+----------------------------------------------------
+
+-- find all the data where minimum_nights is 2 and maximum_nights is 30.
+coll.find({ $and: [{"minimum_nights": "2"}, {"maximum_nights": "30"}]}).pretty()
+
+-- find all the data where minimum_nights is not equal to 2 and 
+-- maximum_nights field exists.
+coll.find({ 
+    $and: [
+        {"minimum_nights": { $ne : "2"}}, 
+        {"maximum_nights": {$exists : true}}
+    ]
+}).count()
+--- $exists:false : to query for null or missing fields
+
+----------------------------------------------------
+----------------------------------------------------
+-- use $not after learning $regex
+----------------------------------------------------
+----------------------------------------------------
+
+-- find all the data where minimum_nights is 2 or property_type is "House".
+coll.find({
+    $or : [
+        {"minimum_nights": "2"}, 
+        {"property_type": "House"}
+    ]
+}).count()
+
+----------------------------
+--- PRACTICE using $expr ---
+----------------------------
+- monthlyBudget collection -
+{ "_id" : 1, "category" : "food", "budget": 400, "spent": 450 }
+{ "_id" : 2, "category" : "drinks", "budget": 100, "spent": 150 }
+{ "_id" : 3, "category" : "clothes", "budget": 100, "spent": 50 }
+{ "_id" : 4, "category" : "misc", "budget": 500, "spent": 300 }
+{ "_id" : 5, "category" : "travel", "budget": 200, "spent": 650 }
+
+-- find documents where the spent amount exceeds the budget:
+db.monthlyBudget.find( { $expr: { $gt: [ "$spent" , "$budget" ] } } )
+
+
+----------------------------
+--- PRACTICE using $cond ---
+----------------------------
+- supplies collection -
+db.supplies.insertMany([
+   { "_id" : 1, "item" : "binder", "qty" : NumberInt("100"), "price" : NumberDecimal("12") },
+   { "_id" : 2, "item" : "notebook", "qty" : NumberInt("200"), "price" : NumberDecimal("8") },
+   { "_id" : 3, "item" : "pencil", "qty" : NumberInt("50"), "price" : NumberDecimal("6") },
+   { "_id" : 4, "item" : "eraser", "qty" : NumberInt("150"), "price" : NumberDecimal("3") },
+   { "_id" : 5, "item" : "legal pad", "qty" : NumberInt("42"), "price" : NumberDecimal("10") }
+])
+-- If qty is greater than or equal to 100, the discounted price will be 0.5 of the price.
+-- If qty is less than 100, the discounted price is 0.75 of the price.
+// Aggregation expression to calculate discounted price
+let discountedPrice = {
+   $cond: {
+      if: { $gte: ["$qty", 100] },
+      then: { $multiply: ["$price", NumberDecimal("0.50")] },
+      else: { $multiply: ["$price", NumberDecimal("0.75")] }
+   }
+};
+
+// Query the supplies collection using the aggregation expression
+db.supplies.find( { $expr: { $lt:[ discountedPrice,  NumberDecimal("5") ] } });
+
+
+----------------------------
+--- PRACTICE using $mod ---
+----------------------------
+- inventory collection -
+{ "_id" : 1, "item" : "abc123", "qty" : 0 }
+{ "_id" : 2, "item" : "xyz123", "qty" : 5 }
+{ "_id" : 3, "item" : "ijk123", "qty" : 12 }
+
+-- selects those documents in the inventory collection where 
+-- value of the qty field modulo 4 equals 0
+db.inventory.find( { qty: { $mod: [ 4, 0 ] } } )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
